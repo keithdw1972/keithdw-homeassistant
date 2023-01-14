@@ -1,0 +1,30 @@
+version: '3'
+
+volumes:
+  homeassistant-config:
+  teslamate-db:
+  teslamate-grafana-data:
+  mosquitto-conf:
+  mosquitto-data:
+
+services:
+  homeassistant:
+    container_name: homeassistant-new
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    hostname: homeassistant
+    restart: always
+    environment:
+      - TZ=Europe/London
+      - LANG+C.UTF-8
+      - PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - S6_BEHAVIOUR_IF_STAGE2_FAILS=2
+      - S6_CMD_WAIT_FOR_SERVICES=1
+      - S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0
+      - S6_SERVICES_GRACETIME=220000
+      - S6_SERVICES_READYTIME=50
+      - WHEELS_LINKS=https://wheels.home-assistant.io/musllinux/
+    volumes:
+      - homeassistant-config:/config
+      - /etc/localtime:/etc/localtime:ro
+    privileged: true
+    network_mode: host
